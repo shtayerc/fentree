@@ -1,0 +1,45 @@
+.TH FENTREE 1
+.SH NAME
+fentree \- list FEN occurences from PGN in a tree-like format.
+.SH SYNOPSIS
+.B fentree
+[\fB\-hv\fR]
+[\fB\-f\fR \fIfilename\fR]
+[\fB\-a\fR \fIarguments\fR]
+.IR file
+.SH DESCRIPTION
+.B fentree
+is directory and FEN position visualisation program.
+.SH OPTIONS
+.TP
+.B \-h
+Prints usage information.
+.TP
+.B \-v
+Prints version.
+.TP
+.B \-f \fIfilename\fP
+Read fentree from \fIfilename\fP.
+By default \fIfile\fP with extension changed to .fentree is used.
+.TP
+.B \-a \fIarguments\fP
+List of \fIarguments\fP passed to \fBtree\fP(1) command.
+By default arguments \fB\-nN --noreport\fP are used.
+.SH CONFIGURATION
+FEN positions of interest are defined in text file.
+Lines starting with '#' are ignored.
+Line format is \fBpath:FEN\fP.
+
+e4/e5:rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2
+.SH EXAMPLES
+.B fentree -a '-H Title --nolinks' white.pgn
+.P
+Output fentree in html format.
+.SH ENVIROMENT
+XDG_CACHE_HOME
+.RS
+Cache directory.
+By default $HOME/.cache is used.
+.SH SEE ALSO
+.BR tree (1),
+.BR pgn-extract (1)
