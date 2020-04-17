@@ -1,0 +1,54 @@
+#!/bin/sh -e
+
+version=0.1
+usage() {
+    cat << EOF
+Usage: fentree [arguments] <pgn file>
+-h        display help
+-v        display version
+-f <file> path to fentree file (default is given file with .fentree extension)
+-a <args> tree(1) command arguments
+EOF
+exit "$1"
+}
+
+while getopts hva:f: OPT; do
+    case "$OPT" in
+        h) usage 0 ;;
+        v) echo "fentree v$version" && exit 0 ;;
+        f) fenfile="$OPTARG" && shift ;;
+        a) args="$OPTARG" && shift ;;
+        \?) usage 1 ;;
+    esac
+    shift
+done
+
+[ $# -lt 1 ] && usage 1
+
+fenfile="${fenfile:-${1%\.*}.fentree}" #replace extension
+[ ! -r "$fenfile" ] && echo "$fenfile does not exists" && exit 1
+
+cachebase=${XDG_CACHE_HOME:-$HOME/.cache}/fentree
+cachedir="$cachebase/$(realpath "$1")"
+
+[ ! -d "$cachedir" ] && mkdir -p "$cachedir" && regenerate=true
+
+[ -n "$(find "$1" -newer "$cachedir")" ] ||
+    [ -n "$(find "$fenfile" -newer "$cachedir")" ] &&
+    regenerate=true
+
+[ "$regenerate" = "true" ] &&
+    rm -rf "$cachedir" &&
+    mkdir -p "$cachedir" &&
+while IFS=':' read -r dir fen; do
+
+    # Skip over lines starting with '#'
+    [ "${dir##\#*}" ] || continue
+
+    mkdir -p "$cachedir/$dir"
+    echo "$fen" > "$cachedir/$dir/$(pgn-extract -Tf"$fen" "$1" 2>&1 | tail -1 | awk '{print $1}')"
+done < "$fenfile"
+
+cd "$cachedir/.."
+# shellcheck disable=SC2086
+tree ${args:--nN --noreport} "${1##.*/}" #basename
