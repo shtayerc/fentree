@@ -8,22 +8,27 @@ Usage: fentree [arguments] <pgn file>
 -v        display version
 -f <file> path to fentree file (default is given file with .fentree extension)
 -a <args> tree(1) command arguments
+-s <path> subtree
 EOF
 exit "$1"
 }
 
-while getopts hva:f: OPT; do
+while getopts hva:f:s: OPT; do
     case "$OPT" in
         h) usage 0 ;;
         v) echo "fentree v$version" && exit 0 ;;
         f) fenfile="$OPTARG" && shift ;;
         a) args="$OPTARG" && shift ;;
+        s) subtree="$OPTARG" && shift ;;
         \?) usage 1 ;;
     esac
     shift
 done
 
 [ $# -lt 1 ] && usage 1
+
+#add slash if subtree is not empty
+[ -n "$subtree" ] && subtree="/$subtree"
 
 fenfile="${fenfile:-${1%\.*}.fentree}" #replace extension
 [ ! -r "$fenfile" ] && echo "$fenfile does not exists" && exit 1
@@ -51,4 +56,4 @@ done < "$fenfile"
 
 cd "$cachedir/.."
 # shellcheck disable=SC2086
-tree ${args:--nN --noreport} "${1##.*/}" #basename
+tree ${args:--nN --noreport} "${1##.*/}$subtree" #basename

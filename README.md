@@ -20,6 +20,7 @@ Usage: fentree [arguments] <pgn file>
 -v        display version
 -f <file> path to fentree file (default is given file with .fentree extension)
 -a <args> tree(1) command arguments
+-s <path> subtree
 ```
 
 File `example.pgn` contains 30 games containing first FEN position and 5 games with second.\
@@ -33,6 +34,11 @@ example.pgn
         │   └── 5
         └── Nf3
             └── 30
+```
+```
+$ fentree -s e4/e5/Bc4 example.pgn
+example.pgn/e4/e5/Bc4
+└── 5
 ```
 
 ## Installation

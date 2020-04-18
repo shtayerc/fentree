@@ -6,6 +6,7 @@ fentree \- list FEN occurences from PGN in a tree-like format.
 [\fB\-hv\fR]
 [\fB\-f\fR \fIfilename\fR]
 [\fB\-a\fR \fIarguments\fR]
+[\fB\-s\fR \fIpath\fR]
 .IR file
 .SH DESCRIPTION
 .B fentree
@@ -25,6 +26,9 @@ By default \fIfile\fP with extension changed to .fentree is used.
 .B \-a \fIarguments\fP
 List of \fIarguments\fP passed to \fBtree\fP(1) command.
 By default arguments \fB\-nN --noreport\fP are used.
+.TP
+.B \-s \fIpath\fP
+Prints subtree
 .SH CONFIGURATION
 FEN positions of interest are defined in text file.
 Lines starting with '#' are ignored.
@@ -35,6 +39,10 @@ e4/e5:rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2
 .B fentree -a '-H Title --nolinks' white.pgn
 .P
 Output fentree in html format.
+
+.B fentree -s e4/e5 white.pgn
+.P
+Output tree after e4/e5
 .SH ENVIROMENT
 XDG_CACHE_HOME
 .RS
