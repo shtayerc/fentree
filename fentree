@@ -27,8 +27,8 @@ done
 
 [ $# -lt 1 ] && usage 1
 
-#add slash if subtree is not empty
-[ -n "$subtree" ] && subtree="/$subtree"
+#add slash if subtree is not empty)
+[ -n "$subtree" ] && subtree="/${subtree##/}"
 
 fenfile="${fenfile:-${1%\.*}.fentree}" #replace extension
 [ ! -r "$fenfile" ] && echo "$fenfile does not exists" && exit 1
@@ -36,11 +36,14 @@ fenfile="${fenfile:-${1%\.*}.fentree}" #replace extension
 cachebase=${XDG_CACHE_HOME:-$HOME/.cache}/fentree
 cachedir="$cachebase/$(realpath "$1")"
 
+
 [ ! -d "$cachedir" ] && mkdir -p "$cachedir" && regenerate=true
 
 [ -n "$(find "$1" -newer "$cachedir")" ] ||
     [ -n "$(find "$fenfile" -newer "$cachedir")" ] &&
     regenerate=true
+
+[ ! -d "$cachedir/$subtree" ] && [ -z "$regenerate" ] && echo "Subtree $subtree does not exists" && exit 1
 
 [ "$regenerate" = "true" ] &&
     rm -rf "$cachedir" &&
@@ -53,6 +56,8 @@ while IFS=':' read -r dir fen; do
     mkdir -p "$cachedir/$dir"
     echo "$fen" > "$cachedir/$dir/$(pgn-extract -Tf"$fen" "$1" 2>&1 | tail -1 | awk '{print $1}')"
 done < "$fenfile"
+
+[ ! -d "$cachedir/$subtree" ] && echo "Subtree $subtree does not exists" && exit 1
 
 cd "$cachedir/.."
 # shellcheck disable=SC2086
